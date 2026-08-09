@@ -7,7 +7,8 @@ import { AppError } from '../utils/AppError';
 const cartService = new CartService();
 
 export const addOrUpdateCartItem = catchAsync(async (req: Request, res: Response) => {
-  const { cartId, userId, productId, variantId, quantity } = req.body;
+  const { cartId, productId, variantId, quantity } = req.body;
+  const userId = (req as any).user?.id;
 
   try {
     const savedCart = await cartService.addOrUpdateCartItem(

@@ -293,14 +293,18 @@ npm start       # Ejecuta desde dist/
 
 ### Carrito — `/api/cart`
 
-| Método | Endpoint | Auth | Descripción |
+> Todos los endpoints requieren `Authorization: Bearer <token>`
+
+| Método | Endpoint | Rol | Descripción |
 |---|---|---|---|
-| `POST` | `/api/cart` | No | Agregar o actualizar ítem en carrito |
-| `GET` | `/api/cart/:id` | No | Obtener carrito por ID |
-| `GET` | `/api/cart/user/:userId` | No | Obtener carrito por ID de usuario |
-| `PUT` | `/api/cart/:id/items/:variantId` | No | Actualizar cantidad de un ítem |
-| `DELETE` | `/api/cart/:id/items/:variantId` | No | Eliminar ítem del carrito |
-| `DELETE` | `/api/cart/:id` | No | Vaciar carrito completo |
+| `POST` | `/api/cart` | `client` / `admin` | Agregar o actualizar ítem en carrito |
+| `GET` | `/api/cart/:id` | `client` / `admin` | Obtener carrito por ID |
+| `GET` | `/api/cart/user/:userId` | `client` / `admin` | Obtener carrito por ID de usuario |
+| `PUT` | `/api/cart/:id/items/:variantId` | `client` / `admin` | Actualizar cantidad de un ítem |
+| `DELETE` | `/api/cart/:id/items/:variantId` | `client` / `admin` | Eliminar ítem del carrito |
+| `DELETE` | `/api/cart/:id` | `client` / `admin` | Vaciar carrito completo |
+
+> El `userId` se extrae automáticamente del token JWT. No es necesario (ni aceptado) enviarlo en el body.
 
 ---
 
@@ -464,3 +468,4 @@ Todos los errores pasan por un middleware centralizado (`errorHandler`) que norm
 | `typescript` | ^5.4.5 | Compilador TypeScript |
 | `tsx` | ^4.7.1 | Ejecución de TS con hot-reload |
 | `@types/*` | Varios | Tipos para las dependencias de producción |
+
