@@ -60,6 +60,11 @@ export class AuthService {
     const secret = process.env.JWT_SECRET || 'super_secret_jwt_key_for_development';
     const expiresIn = (process.env.JWT_EXPIRES_IN || '7d') as any;
 
-    return jwt.sign(payload, secret, { expiresIn });
+    try {
+      return jwt.sign(payload, secret, { expiresIn });
+    } catch (error) {
+      // Fallo de infraestructura: secret inválido, opciones corruptas, etc.
+      throw new AppError('Failed to generate authentication token', 500, false);
+    }
   }
 }

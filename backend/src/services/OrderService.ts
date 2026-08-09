@@ -38,15 +38,20 @@ export class OrderService {
     }
 
     // Descontar stock
-    for (const item of cart.items) {
-      const product = await productRepository.findById(item.productId);
-      const variant = product!.variants.find(v => (v._id && v._id.toString() === item.variantId.toString()) || v.sku === item.variantId.toString());
-      
-      await productRepository.updateVariantStock(
-        item.productId.toString(), 
-        item.variantId.toString(), 
-        variant!.stock - item.quantity
-      );
+    try {
+      for (const item of cart.items) {
+        const product = await productRepository.findById(item.productId);
+        const variant = product!.variants.find(v => (v._id && v._id.toString() === item.variantId.toString()) || v.sku === item.variantId.toString());
+
+        await productRepository.updateVariantStock(
+          item.productId.toString(),
+          item.variantId.toString(),
+          variant!.stock - item.quantity
+        );
+      }
+    } catch (error) {
+      // Fallo de infraestructura: el stock quedó parcialmente descontado (inconsistencia de datos)
+      throw new AppError('Failed to update stock during order creation', 500, false);
     }
 
     const orderData: Partial<IOrder> = {
@@ -135,18 +140,23 @@ export class OrderService {
     const updatedOrder = await orderRepository.updateStatus(orderId, 'cancelled');
 
     // Restituir stock
-    for (const item of order.items) {
-      const product = await productRepository.findById(item.productId);
-      if (product) {
-        const variant = product.variants.find(v => (v._id && v._id.toString() === item.variantId.toString()) || v.sku === item.variantId.toString());
-        if (variant) {
-          await productRepository.updateVariantStock(
-            item.productId.toString(),
-            item.variantId.toString(),
-            variant.stock + item.quantity
-          );
+    try {
+      for (const item of order.items) {
+        const product = await productRepository.findById(item.productId);
+        if (product) {
+          const variant = product.variants.find(v => (v._id && v._id.toString() === item.variantId.toString()) || v.sku === item.variantId.toString());
+          if (variant) {
+            await productRepository.updateVariantStock(
+              item.productId.toString(),
+              item.variantId.toString(),
+              variant.stock + item.quantity
+            );
+          }
         }
       }
+    } catch (error) {
+      // Fallo de infraestructura: el stock quedó parcialmente restituido (inconsistencia de datos)
+      throw new AppError('Failed to restore stock during order cancellation', 500, false);
     }
 
     return updatedOrder!;

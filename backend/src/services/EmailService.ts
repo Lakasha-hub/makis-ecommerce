@@ -4,6 +4,7 @@ import { orderConfirmationTemplate } from '../templates/emails/orderConfirmation
 import { orderStatusUpdateTemplate } from '../templates/emails/orderStatusUpdate';
 import { userRegistrationTemplate } from '../templates/emails/userRegistration';
 import { passwordChangeTemplate } from '../templates/emails/passwordChange';
+import { AppError } from '../utils/AppError';
 
 class EmailService {
   private transporter: nodemailer.Transporter | null = null;
@@ -43,7 +44,8 @@ class EmailService {
         this.isInitialized = true;
         console.log(`Ethereal test account generated. User: ${testAccount.user}`);
       } catch (error) {
-        console.error('Failed to create Ethereal account:', error);
+        // Fallo de servicio externo (Ethereal): no operacional
+        throw new AppError('Failed to initialize Ethereal email account', 500, false);
       }
     }
   }
@@ -76,7 +78,8 @@ class EmailService {
         console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
       }
     } catch (error) {
-      console.error('Error sending email:', error);
+      // Fallo del servidor SMTP: servicio de terceros no disponible
+      throw new AppError('Failed to send email via SMTP', 500, false);
     }
   }
 
