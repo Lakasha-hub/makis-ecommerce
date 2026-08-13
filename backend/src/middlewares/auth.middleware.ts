@@ -29,3 +29,17 @@ export const authorizeRoles = (...roles: string[]) => {
     next();
   };
 };
+
+/** Decodifica el token si está presente, pero no bloquea si no hay ninguno. */
+export const optionalAuth = (req: Request, _res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.JWT_SECRET || 'super_secret_jwt_key_for_development', (err, decoded) => {
+      if (!err) (req as any).user = decoded;
+      next();
+    });
+  } else {
+    next();
+  }
+};

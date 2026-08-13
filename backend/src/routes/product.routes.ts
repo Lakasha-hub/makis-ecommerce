@@ -2,11 +2,12 @@ import { Router } from 'express';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct, updateVariantStock } from '../controllers/product.controller';
 import { validateRequest } from '../middlewares/validateRequest';
 import { createProductSchema, updateProductSchema, updateVariantStockSchema } from '../schemas/product.schema';
-import { authenticateJWT, authorizeRoles } from '../middlewares/auth.middleware';
+import { authenticateJWT, authorizeRoles, optionalAuth } from '../middlewares/auth.middleware';
+
 
 const router = Router();
 
-router.get('/', getProducts);
+router.get('/', optionalAuth, getProducts);
 router.get('/:id', getProductById);
 router.post('/', authenticateJWT, authorizeRoles('admin'), validateRequest(createProductSchema), createProduct);
 router.put('/:id', authenticateJWT, authorizeRoles('admin'), validateRequest(updateProductSchema), updateProduct);

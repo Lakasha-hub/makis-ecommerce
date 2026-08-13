@@ -4,4 +4,8 @@ dist/
 .DS_Store
 coverage/
 *.log
+# Orquestación migrada a la raíz del monorepo
+docker-compose.yml
 .devcontainer/
+
+

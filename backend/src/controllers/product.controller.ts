@@ -8,10 +8,13 @@ const productService = new ProductService();
 
 export const getProducts = catchAsync(async (req: Request, res: Response) => {
   const { category, material } = req.query;
-  
+  const user = (req as any).user;
+  const isAdmin = user?.role === 'admin';
+
   const products = await productService.getProducts(
     category as string | undefined,
-    material as string | undefined
+    material as string | undefined,
+    isAdmin
   );
   
   sendResponse(res, 200, products, 'Products fetched successfully');

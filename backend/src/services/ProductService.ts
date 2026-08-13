@@ -5,8 +5,9 @@ import { Types } from 'mongoose';
 const productRepository = new ProductRepository();
 
 export class ProductService {
-  async getProducts(category?: string, material?: string): Promise<IProduct[]> {
-    const filter: Record<string, any> = { isActive: true };
+  async getProducts(category?: string, material?: string, isAdmin = false): Promise<IProduct[]> {
+    const filter: Record<string, any> = {};
+    if (!isAdmin) filter.isActive = true;
     if (category) filter.category = category;
     if (material) filter.material = material;
 
