@@ -24,6 +24,8 @@ export interface IOrder {
   totalAmount: number;
   status: OrderStatus;
   shippingAddress: IShippingAddress;
+  preferenceId?: string;
+  paymentId?: string;
 }
 
 const orderItemSchema = new Schema<IOrderItem>({
@@ -53,6 +55,8 @@ const orderSchema = new Schema<IOrder>(
       default: 'pending',
     },
     shippingAddress: { type: shippingAddressSchema, required: true },
+    preferenceId: { type: String },
+    paymentId: { type: String },
   },
   { timestamps: true }
 );

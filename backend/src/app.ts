@@ -8,6 +8,7 @@ import productRoutes from './routes/product.routes';
 import userRoutes from './routes/user.routes';
 import orderRoutes from './routes/order.routes';
 import cartRoutes from './routes/cart.routes';
+import paymentRoutes from './routes/payment.routes';
 
 const app: Application = express();
 
@@ -27,6 +28,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Error Handling Middleware
 app.use(errorHandler);

@@ -21,3 +21,16 @@ export const updateUserSchema = z.object({
     email: z.string().email('Invalid email address').optional(),
   })
 });
+
+export const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email('Email inválido'),
+  })
+});
+
+export const resetPasswordSchema = z.object({
+  body: z.object({
+    token: z.string().min(1, 'Token requerido'),
+    password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  })
+});

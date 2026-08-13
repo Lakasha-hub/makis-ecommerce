@@ -15,6 +15,10 @@ export class OrderRepository {
     return Order.findById(id);
   }
 
+  async findByPaymentId(paymentId: string): Promise<IOrder | null> {
+    return Order.findOne({ paymentId });
+  }
+
   async updateStatus(id: string | Types.ObjectId, status: OrderStatus): Promise<IOrder | null> {
     return Order.findByIdAndUpdate(
       id,

@@ -10,6 +10,13 @@ export class UserRepository {
     return User.findById(id);
   }
 
+  async findByResetToken(token: string): Promise<IUser | null> {
+    return User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: new Date() },
+    });
+  }
+
   async create(userData: Partial<IUser>): Promise<IUser> {
     const newUser = new User(userData);
     return newUser.save();
@@ -31,3 +38,4 @@ export class UserRepository {
     );
   }
 }
+

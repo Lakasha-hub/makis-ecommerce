@@ -2,6 +2,7 @@ import { UserRepository } from '../repositories/UserRepository';
 import { IUser } from '../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import { AppError } from '../utils/AppError';
 import { emailService } from './EmailService';
 
@@ -48,11 +49,47 @@ export class AuthService {
 
     const token = this.generateToken(user);
 
-    // type assertion if mongoose document
     const userResponse = ('toObject' in user ? (user as any).toObject() : user);
     delete userResponse.password;
 
     return { user: userResponse, token };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await userRepository.findByEmail(email);
+
+    // Respuesta genérica: no revelar si el email existe o no
+    if (!user || !user.isActive) return;
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+
+    await userRepository.update((user as any)._id, {
+      resetPasswordToken: token,
+      resetPasswordExpires: expires,
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const resetLink = `${frontendUrl}/auth?modo=reset&token=${token}`;
+
+    await emailService.sendPasswordChange(user.email, user.name, resetLink);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const user = await userRepository.findByResetToken(token);
+
+    if (!user) {
+      throw new AppError('El enlace de recuperación es inválido o ya expiró', 400);
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await userRepository.update((user as any)._id, {
+      password: hashedPassword,
+      resetPasswordToken: undefined,
+      resetPasswordExpires: undefined,
+    });
   }
 
   private generateToken(user: any): string {
@@ -63,8 +100,8 @@ export class AuthService {
     try {
       return jwt.sign(payload, secret, { expiresIn });
     } catch (error) {
-      // Fallo de infraestructura: secret inválido, opciones corruptas, etc.
       throw new AppError('Failed to generate authentication token', 500, false);
     }
   }
 }
+
