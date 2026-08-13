@@ -35,7 +35,6 @@ export async function getProduct(id: string): Promise<import('./catalog').Produc
   return res.data;
 }
 
-// Auth
 export async function loginApi(email: string, password: string) {
   const res = await api.post<{ data: { user: unknown; token: string } }>('/api/auth/login', { email, password });
   return res.data;
@@ -43,4 +42,10 @@ export async function loginApi(email: string, password: string) {
 export async function registerApi(name: string, email: string, password: string) {
   const res = await api.post<{ data: { user: unknown; token: string } }>('/api/auth/register', { name, email, password });
   return res.data;
+}
+export async function forgotPasswordApi(email: string) {
+  await api.post('/api/auth/forgot-password', { email });
+}
+export async function resetPasswordApi(token: string, password: string) {
+  await api.post('/api/auth/reset-password', { token, password });
 }

@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { Layout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
@@ -122,11 +121,11 @@ export function CartPage() {
                 <span>{formatPrice(total)}</span>
               </div>
               <Button
+                asChild
                 className="mt-6 w-full"
                 size="lg"
-                onClick={() => toast.info("El checkout estará disponible próximamente")}
               >
-                Confirmar compra
+                <Link to="/checkout">Confirmar compra</Link>
               </Button>
               <Button variant="ghost" className="mt-2 w-full text-xs" onClick={clear}>
                 Vaciar carrito

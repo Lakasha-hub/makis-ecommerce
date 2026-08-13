@@ -1,38 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import { toast } from 'sonner';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/hooks/useCart';
+import { ArrowRight } from 'lucide-react';
 import { CATEGORY_LABELS, MATERIAL_LABELS, PLACEHOLDER_IMAGE, formatPrice, type Product } from '@/lib/catalog';
 
 export function ProductCard({ product }: { product: Product }) {
-  const { add, items } = useCart();
-  const variants = product.variants ?? [];
-  const inStock = variants.filter((v) => v.stock > 0);
-  const first = inStock[0];
-
-  const quickAdd = () => {
-    if (!first) { toast.error('Sin stock disponible'); return; }
-
-    // Verificar si ya se llegó al máximo de stock en el carrito
-    const inCart = items.find((i) => i.variantId === first._id);
-    if (inCart && inCart.qty >= first.stock) {
-      toast.warning(`Ya tenés el máximo disponible de "${product.title}" en el carrito (${first.stock} unid.)`);
-      return;
-    }
-
-    add({
-      productId: product._id,
-      variantId: first._id,
-      title: product.title,
-      spec: `${first.specificationLabel}: ${first.specificationValue}`,
-      price: first.price ?? product.price,
-      image: product.images?.[0] ?? null,
-      stock: first.stock,
-    });
-    toast.success(`${product.title} agregado al carrito`);
-  };
-
   return (
     <article className="group">
       <Link to="/producto/$id" params={{ id: product._id }} className="block overflow-hidden bg-sand-light">
@@ -51,10 +21,16 @@ export function ProductCard({ product }: { product: Product }) {
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{formatPrice(product.price)}</p>
         </div>
-        <Button size="icon" variant="outline" onClick={quickAdd} disabled={!first} aria-label={`Agregar ${product.title} al carrito`}>
-          <Plus className="h-4 w-4" />
-        </Button>
+        <Link
+          to="/producto/$id"
+          params={{ id: product._id }}
+          aria-label={`Ver más sobre ${product.title}`}
+          className="flex h-9 w-9 shrink-0 items-center justify-center border border-border text-muted-foreground transition-colors hover:border-foreground hover:text-foreground"
+        >
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
     </article>
   );
 }
+

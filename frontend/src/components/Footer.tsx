@@ -36,7 +36,7 @@ export function Footer() {
             <li className="flex items-center gap-2"><Truck className="h-4 w-4 text-sand-dark" /> Envíos a todo el país</li>
             <li className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-sand-dark" /> Garantía de 30 días</li>
             <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-sand-dark" /> makisaccesorios@gmail.com</li>
-            <li className="flex items-center gap-2"><InstagramIcon className="h-4 w-4 text-sand-dark" /> @makis.accesorios</li>
+            <li className="flex items-center gap-2"><InstagramIcon className="h-4 w-4 text-sand-dark" /> @makis.acc</li>
           </ul>
         </div>
       </div>
